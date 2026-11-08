@@ -39,6 +39,7 @@ body.theme-dark {
 	--hop-14: hsl(232 68% 79%);
 	--hop-15: hsl(248 65% 80%);
 	--hop-16: hsl(262 60% 80%);
+	--hop-17: hsl(276 55% 80%);
 	--hop-18: hsl(288 52% 80%);
 	--hop-90: hsl(220  8% 73%);
 	--hop-91: hsl(220  8% 72%);
@@ -55,6 +56,7 @@ body.theme-light {
 	--hop-14: hsl(232 50% 45%);
 	--hop-15: hsl(248 45% 47%);
 	--hop-16: hsl(262 42% 46%);
+	--hop-17: hsl(276 40% 43%);
 	--hop-18: hsl(288 38% 41%);
 	--hop-90: hsl(220  8% 35%);
 	--hop-91: hsl(220  8% 36%);
@@ -81,6 +83,7 @@ body {
 .nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="14-"]) { --hop: var(--hop-14); }
 .nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="15-"]) { --hop: var(--hop-15); }
 .nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="16-"]) { --hop: var(--hop-16); }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="17-"]) { --hop: var(--hop-17); }
 .nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="18-"]) { --hop: var(--hop-18); }
 .nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="90-"]) { --hop: var(--hop-90); }
 .nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="91-"]) { --hop: var(--hop-91); }
@@ -107,6 +110,7 @@ body {
 .nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="14-"]) { order: 14; }
 .nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="15-"]) { order: 15; }
 .nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="16-"]) { order: 16; }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="17-"]) { order: 17; }
 .nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="18-"]) { order: 18; }
 .nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="90-"]) { order: 90; }
 .nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="91-"]) { order: 91; }
