@@ -1,0 +1,217 @@
+/* ============================================================================
+ * サイドバー（ファイルの一覧）を、誰が書くかで色分けして番号順に並べる
+ *
+ * 名前の頭の番号の1桁目が、誰が書くかを表す（0x 自分・1x AI・9x 自動）。
+ * このスニペットは、それをサイドバーに出す。
+ *
+ *   1. 番号の順に並べる（Obsidian はフォルダを先に並べるので、そのままでは
+ *      00-案件情報.md が 92-見本 の後ろに来る）
+ *   2. 群ごとに見出しを付ける（You write / Claude writes / Miscellaneous）
+ *   3. 番号ごとに色を付ける（いちばん上の段は帯、フォルダの中は字の色）
+ *
+ * 判定は名前の頭の番号だけ。後ろの日本語は変えてよい。
+ * 番号を足すときは「番号 → 並び順」と「番号 → 色」に1行ずつ足し、
+ * 色は下の「色」に、ダークとライトの両方を足す。
+ * ============================================================================ */
+
+/* --- 見出しの字 ---------------------------------------------------------- */
+body {
+	--hop-grp-0: "You write";
+	--hop-grp-1: "Claude writes";
+	--hop-grp-9: "Miscellaneous";
+}
+
+/* --- 色 -------------------------------------------------------------------
+ * 群を色相で分け、群の中は色相を少しずつずらす。
+ *   0x 暖色 … 自分が書く。手で触るので、いちばん目を引く
+ *   1x 寒色 … AI が書く。読むだけ
+ *   9x 灰   … 自動。誰も触らないので沈める
+ * 字は帯（下の --hop-fill）の上で 4.5:1 以上になる明るさにしてある。
+ * 9x は 4.5:1 に届く灰がほぼ1つしか無いので、濃淡はごくわずか。 */
+body.theme-dark {
+	--hop-00: hsl( 38 70% 72%);
+	--hop-01: hsl( 26 70% 70%);
+	--hop-02: hsl( 14 55% 73%);
+	--hop-10: hsl(192 68% 76%);
+	--hop-11: hsl(202 68% 75%);
+	--hop-12: hsl(212 68% 76%);
+	--hop-13: hsl(222 68% 77%);
+	--hop-14: hsl(232 68% 79%);
+	--hop-15: hsl(248 65% 80%);
+	--hop-16: hsl(262 60% 80%);
+	--hop-18: hsl(288 52% 80%);
+	--hop-90: hsl(220  8% 73%);
+	--hop-91: hsl(220  8% 72%);
+	--hop-92: hsl(220  8% 71%);
+}
+body.theme-light {
+	--hop-00: hsl( 38 90% 26%);
+	--hop-01: hsl( 26 85% 31%);
+	--hop-02: hsl( 14 65% 36%);
+	--hop-10: hsl(192 90% 25%);
+	--hop-11: hsl(202 80% 31%);
+	--hop-12: hsl(212 70% 37%);
+	--hop-13: hsl(222 60% 42%);
+	--hop-14: hsl(232 50% 45%);
+	--hop-15: hsl(248 45% 47%);
+	--hop-16: hsl(262 42% 46%);
+	--hop-18: hsl(288 38% 41%);
+	--hop-90: hsl(220  8% 35%);
+	--hop-91: hsl(220  8% 36%);
+	--hop-92: hsl(220  8% 37%);
+}
+
+/* 帯の濃さ（いちばん上の段・マウスを乗せたとき・開いているファイル） */
+body {
+	--hop-fill: 20%;
+	--hop-fill-hover: 30%;
+	--hop-fill-sub-hover: 14%;
+	--hop-fill-active: 30%;
+}
+
+/* --- 番号 → 色 -------------------------------------------------------------
+ * いちばん上の段の項目に置けば、フォルダの中にも受け継がれる */
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="00-"]) { --hop: var(--hop-00); }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="01-"]) { --hop: var(--hop-01); }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="02-"]) { --hop: var(--hop-02); }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="10-"]) { --hop: var(--hop-10); }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="11-"]) { --hop: var(--hop-11); }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="12-"]) { --hop: var(--hop-12); }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="13-"]) { --hop: var(--hop-13); }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="14-"]) { --hop: var(--hop-14); }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="15-"]) { --hop: var(--hop-15); }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="16-"]) { --hop: var(--hop-16); }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="18-"]) { --hop: var(--hop-18); }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="90-"]) { --hop: var(--hop-90); }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="91-"]) { --hop: var(--hop-91); }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="92-"]) { --hop: var(--hop-92); }
+/* CLAUDE.md は AI への指示書で、番号の外。帯を付けず、少し離して淡い字にする（下の「行」） */
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path="CLAUDE.md"]) { --hop: var(--text-muted); }
+
+/* --- 番号 → 並び順（番号の数そのもの） ------------------------------------
+ * いちばん上の段を縦の flex にして、order で並べ替える。番号の無いものは最後 */
+.nav-files-container > div {
+	display: flex;
+	flex-direction: column;
+}
+/* 先頭の高さ 0.1px の div は、一覧の高さを決める部品。いつも先頭に置く */
+.nav-files-container > div > div:not(.tree-item) { order: -1; }
+.nav-files-container > div > .tree-item { order: 99; }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="00-"]) { order:  0; }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="01-"]) { order:  1; }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="02-"]) { order:  2; }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="10-"]) { order: 10; }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="11-"]) { order: 11; }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="12-"]) { order: 12; }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="13-"]) { order: 13; }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="14-"]) { order: 14; }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="15-"]) { order: 15; }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="16-"]) { order: 16; }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="18-"]) { order: 18; }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="90-"]) { order: 90; }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="91-"]) { order: 91; }
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="92-"]) { order: 92; }
+
+/* Obsidian は、見積もった範囲の行だけを作る。見積もりは「DOM で次にある行の上端まで」の
+ * 距離なので、並べ替えると実際より大きくなり、最後のほうの行（CLAUDE.md など）が
+ * 作られないことがある。
+ * そこで、巻くのを1つ外の箱に任せ、一覧の箱は上へ大きく伸ばす（上へはみ出た分は
+ * 見えず、巻いても届かない）。Obsidian は箱の高さの 1/4 を余分に作るので、
+ * 見積もりがずれても全部の行が作られる。上のボタンの列は、巻いても上に残す。
+ * 見た目だけを並べ替えるので、キーボードの上下は元の並び（フォルダが先）で動く */
+.workspace-leaf-content[data-type="file-explorer"] {
+	overflow-y: auto;
+}
+.workspace-leaf-content[data-type="file-explorer"] > .nav-files-container {
+	flex: 0 0 auto;
+	height: auto;
+	overflow: visible;
+	margin-top: -40000px;
+	padding-top: calc(40000px + var(--size-4-1));
+}
+.workspace-leaf-content[data-type="file-explorer"] > .nav-header {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	background-color: var(--background-secondary);
+}
+
+/* --- 行 ------------------------------------------------------------------- */
+.nav-files-container .tree-item-self {
+	/* 太さは変数で渡す（マウスを乗せた・開いたときの太さを、本体はこの変数から取る） */
+	--nav-item-weight: 700;
+	--nav-item-weight-hover: 700;
+	--nav-item-weight-active: 700;
+	font-weight: 700;
+	border-radius: var(--radius-s);
+	--nav-item-color: var(--hop, var(--text-muted));
+	--nav-item-color-hover: var(--hop, var(--text-normal));
+	--nav-item-color-active: var(--hop, var(--text-normal));
+	--nav-item-background-hover: color-mix(in srgb, var(--hop, var(--text-normal)) var(--hop-fill-sub-hover), transparent);
+	--nav-item-background-active: color-mix(in srgb, var(--hop, var(--text-normal)) var(--hop-fill-active), transparent);
+}
+/* 開閉の矢印も行の色に */
+.nav-files-container .tree-item-self .tree-item-icon {
+	color: currentColor;
+}
+
+/* いちばん上の段は帯。字はその番号の色 */
+.nav-files-container > div > .tree-item > .tree-item-self {
+	background-color: color-mix(in srgb, var(--hop, transparent) var(--hop-fill), transparent);
+	--nav-item-background-hover: color-mix(in srgb, var(--hop, var(--text-normal)) var(--hop-fill-hover), transparent);
+	--nav-item-color-active: var(--text-normal);
+}
+/* 同じ群の帯が続くので、間を 2px だけ空ける */
+.nav-files-container > div > .tree-item {
+	margin-bottom: 2px;
+}
+
+/* フォルダの中の行は、字の色と細い破線だけ */
+.nav-files-container .tree-item-children > .tree-item > .tree-item-self {
+	border-bottom: 1px dashed var(--background-modifier-border);
+	border-radius: 0;
+}
+
+/* 番号の無いもの（CLAUDE.md）は帯なし */
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path="CLAUDE.md"]) {
+	margin-top: 8px;
+}
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path="CLAUDE.md"]) > .tree-item-self:not(.is-active):not(:hover) {
+	background-color: transparent;
+}
+
+/* 開いているファイルは、塗りを濃くして左に印 */
+.nav-files-container .tree-item-self.is-active,
+.nav-files-container > div > .tree-item > .tree-item-self.is-active {
+	background-color: var(--nav-item-background-active);
+	box-shadow: inset 3px 0 0 var(--hop, var(--text-normal));
+}
+
+/* --- 群の見出し -------------------------------------------------------------
+ * 群のいちばん上の番号（00・10・90）の行の上に出す。00-案件情報.md を消したときは 01 の上に */
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="00-"])::before,
+.nav-files-container > div:not(:has(> .tree-item > .tree-item-self[data-path^="00-"])) > .tree-item:has(> .tree-item-self[data-path^="01-"])::before,
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="10-"])::before,
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="90-"])::before {
+	display: block;
+	margin: 22px 0 6px;
+	padding: 0 0 4px 2px;
+	border-bottom: 1px solid color-mix(in srgb, var(--hop) 32%, transparent);
+	color: var(--hop);
+	font-size: var(--font-ui-small);
+	font-weight: 700;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	pointer-events: none;
+}
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="00-"])::before,
+.nav-files-container > div:not(:has(> .tree-item > .tree-item-self[data-path^="00-"])) > .tree-item:has(> .tree-item-self[data-path^="01-"])::before {
+	content: var(--hop-grp-0);
+	margin-top: 4px;
+}
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="10-"])::before {
+	content: var(--hop-grp-1);
+}
+.nav-files-container > div > .tree-item:has(> .tree-item-self[data-path^="90-"])::before {
+	content: var(--hop-grp-9);
+}
